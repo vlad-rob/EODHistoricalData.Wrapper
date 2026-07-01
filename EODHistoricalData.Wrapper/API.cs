@@ -9,6 +9,7 @@ using EOD.Model.ExchangeDetails;
 using EOD.Model.Fundamental;
 using EOD.Model.IPOs;
 using EOD.Model.OptionsData;
+using EOD.Model.Rates;
 using EOD.Model.Screener;
 using EOD.Model.TechnicalIndicators;
 using EOD.Model.UpcomingEarnings;
@@ -51,6 +52,7 @@ namespace EOD
         private readonly ITechnicalIndicatorAPI technicalIndicatorAPI;
         private readonly ISentimentsAPI sentimentsAPI;
         private readonly IHistoricalMarketCapAPI historicalMarketCapAPI;
+        private readonly IInterestRatesAPI interestRatesAPI;
 
         #region Enums
 
@@ -287,6 +289,7 @@ namespace EOD
             technicalIndicatorAPI = new TechnicalIndicatorAPI(apiKey, proxy, source);
             sentimentsAPI = new SentimentsApi(apiKey, proxy, source);
             historicalMarketCapAPI = new HistoricalMarketCapAPI(apiKey, proxy, source);
+            interestRatesAPI = new InterestRatesAPI(apiKey, proxy, source);
         }
 
         /// <summary>
@@ -580,6 +583,28 @@ namespace EOD
         public async Task<List<MacroIndicator>> GetMacroIndicatorsAsync(string country, string indicator)
         {
             return await macroIndicatorsAPI.GetDataAsync(country, indicator);
+        }
+
+        /// <summary>
+        /// Get post-LIBOR risk-free reference rates such as SOFR, EFFR, SONIA, and ESTR.
+        /// </summary>
+        /// <param name="code">Optional. One or more series codes. Examples: SOFR, EFFR, SONIA, ESTR.</param>
+        /// <param name="currency">Optional. Restrict to a single currency: USD, GBP, or EUR.</param>
+        /// <param name="from">Optional. Start date, inclusive.</param>
+        /// <param name="to">Optional. End date, inclusive. Must be on or after <paramref name="from"/>.</param>
+        /// <param name="limit">Optional. Rows per page, 1 to 100. Default API value is 20.</param>
+        /// <param name="offset">Optional. Number of rows to skip. Default API value is 0.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public async Task<ReferenceRatesResponse> GetRiskFreeReferenceRatesAsync(string code = null, string currency = null,
+            DateTime? from = null, DateTime? to = null, int? limit = null, int? offset = null)
+        {
+            if (from != null && to != null && to < from) throw new ArgumentException("To date must be on or after from date.", nameof(to));
+            if (limit != null && (limit < 1 || limit > 100)) throw new ArgumentOutOfRangeException(nameof(limit));
+            if (offset != null && offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
+
+            return await interestRatesAPI.GetRiskFreeReferenceRatesAsync(code, currency, from, to, limit, offset);
         }
 
         /// <summary>

@@ -404,6 +404,24 @@ namespace EODHistoricalData.Wrapper.NetCore.Tests
         }
 
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod()]
+        public async Task GetRiskFreeReferenceRatesAsyncTest_SOFR()
+        {
+            var result = await _api.GetRiskFreeReferenceRatesAsync("SOFR", null, new DateTime(2023, 1, 1), new DateTime(2025, 6, 1));
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Data);
+            Assert.IsTrue(result.Data.Count > 1);
+        }
+
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod()]
+        public async Task GetRiskFreeReferenceRatesAsyncTest_SOFR_WithLimit()
+        {
+            var result = await _api.GetRiskFreeReferenceRatesAsync("SOFR", null, new DateTime(2023, 1, 1), new DateTime(2025, 6, 1), 1);
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Data);
+            Assert.IsTrue(result.Data.Count == 1);
+        }
+
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethod()]
         public async Task GetExchangeSymbolsAsyncTest_US()
         {
             var result = await _api.GetExchangeSymbolsAsync("US");
