@@ -1,12 +1,13 @@
 ﻿using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace EODHistoricalData.Wrapper.Utils
 {
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-
     public sealed class NaStringToNullConverter : JsonConverter
     {
+        public static bool IsNA(string str) => string.Equals(str.Trim(), "NA", StringComparison.OrdinalIgnoreCase);
+        
         public override bool CanConvert(Type objectType)
         {
             Type type = Nullable.GetUnderlyingType(objectType) ?? objectType;
@@ -32,7 +33,7 @@ namespace EODHistoricalData.Wrapper.Utils
             {
                 string value = reader.Value?.ToString();
 
-                if (string.Equals(value, "NA", StringComparison.OrdinalIgnoreCase))
+                if (IsNA(value))
                     return null;
             }
 

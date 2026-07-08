@@ -26,6 +26,7 @@ namespace EOD.APIs
         }
 
         public Task<T> GetFundamentalsDataAsync<T>(string ticker, string filters = null)
+            where T : class
         {
             return ExecuteQueryAsync<T>(BuildFundamentalsUri(ticker, filters));
         }

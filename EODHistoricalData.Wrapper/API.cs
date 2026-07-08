@@ -414,6 +414,7 @@ namespace EOD
         /// </remarks>
         /// <exception cref="ArgumentException"></exception>
         public async Task<T> GetFundamentalDataAsync<T>(string ticker, string filters = null)
+            where T : class
         {
             CheckTicker(ticker);
 

@@ -22,7 +22,8 @@ namespace EOD.APIs.Abstract
         /// "Financials" or "General"), because the API then returns the inner
         /// object/array/value rather than the full FundamentalData shape.
         /// </summary>
-        Task<T> GetFundamentalsDataAsync<T>(string ticker, string filters = null);
+        Task<T> GetFundamentalsDataAsync<T>(string ticker, string filters = null)
+            where T : class;
 
         /// <summary>
         /// To get the raw fundamental data feed as a JToken. Handles any filter

@@ -44,6 +44,7 @@ namespace EOD.APIs.Abstract
         }
 
         public async Task<T> ExecuteQueryAsync<T>(string uri)
+        where T: class
         {
             if (!string.IsNullOrEmpty(_apiToken))
             {
@@ -65,7 +66,9 @@ namespace EOD.APIs.Abstract
             }
 
             string content = await response.Content.ReadAsStringAsync();
-            T result = JsonConvert.DeserializeObject<T>(content, new NaStringToNullConverter());
+            if (NaStringToNullConverter.IsNA(content))
+                return null;
+            T result = JsonConvert.DeserializeObject<T>(content);
             return result;
         }
 
