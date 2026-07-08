@@ -65,8 +65,7 @@ namespace EOD.APIs.Abstract
             }
 
             string content = await response.Content.ReadAsStringAsync();
-            T result = JsonConvert.DeserializeObject<T>(content);
-            if (result == null) throw new NullReferenceException();
+            T result = JsonConvert.DeserializeObject<T>(content, new NaStringToNullConverter());
             return result;
         }
 
